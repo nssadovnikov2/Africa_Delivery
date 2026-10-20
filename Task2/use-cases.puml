@@ -1,0 +1,60 @@
+@startuml use-cases
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+title Africa Delivery — MVP use cases (15 Oct 2026)
+
+actor "Buyer (app)" as B
+actor "Buyer (USSD/SMS)" as BU
+actor "Seller" as S
+actor "Ops / Moderator" as O
+actor "CEO / Investor" as C
+actor "Payment provider\n(M-Pesa, Flutterwave)" as P <<system>>
+actor "Logistics partner\n(Sendbox, Sendy)" as L <<system>>
+
+rectangle "Africa Delivery Platform — MVP" {
+  usecase "UC1 Browse & search catalogue\n(offline cache)" as UC1
+  usecase "UC2 Register with phone + OTP,\ngive consent" as UC2
+  usecase "UC3 Place order" as UC3
+  usecase "UC4 Pay (M-Pesa / card / transfer)" as UC4
+  usecase "UC5 Choose delivery:\ncourier or pickup point" as UC5
+  usecase "UC6 Track order status\n(app / SMS)" as UC6
+  usecase "UC7 Order via USSD menu" as UC7
+  usecase "UC8 Request return / refund" as UC8
+  usecase "UC9 Onboard via WhatsApp\n(KYC docs, first listing)" as UC9
+  usecase "UC10 List products & stock\nvia WhatsApp" as UC10
+  usecase "UC11 Confirm & hand over order" as UC11
+  usecase "UC12 Receive same-day payout\n(after delivery)" as UC12
+  usecase "UC13 Verify seller (KYC),\nmoderate catalogue" as UC13
+  usecase "UC14 Take down content\non regulator request" as UC14
+  usecase "UC15 Resolve dispute,\napprove refund" as UC15
+  usecase "UC16 View live launch dashboard" as UC16
+  usecase "Send SMS / WhatsApp\nnotification" as N
+}
+
+B --> UC1
+B --> UC2
+B --> UC3
+B --> UC6
+B --> UC8
+BU --> UC7
+BU --> UC6
+UC3 ..> UC4 : <<include>>
+UC3 ..> UC5 : <<include>>
+UC7 ..> UC4 : <<include>>
+UC3 ..> N : <<include>>
+S --> UC9
+S --> UC10
+S --> UC11
+S --> UC12
+O --> UC13
+O --> UC14
+O --> UC15
+C --> UC16
+UC4 --> P
+UC12 --> P
+UC5 --> L
+UC11 --> L
+UC9 ..> UC13 : <<include>>
+UC15 ..> UC8 : <<extend>>
+@enduml

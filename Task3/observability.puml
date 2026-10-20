@@ -1,0 +1,47 @@
+@startuml observability
+title Africa Delivery — telemetry collection (MVP)
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+package "Clients" {
+  [Flutter app\n(Firebase Perf + Sentry SDK)] as app
+  [Synthetic probes\n(blackbox exporter on vault VMs\nin Lagos & Nairobi)] as probes
+}
+cloud "Cloudflare" {
+  [CDN / WAF logs\n& analytics] as cf
+}
+package "GKE africa-south1" {
+  [api / worker / channels\n(OTel SDK: metrics, traces,\nJSON logs with trace_id)] as core
+  [kube-state-metrics,\nnode-exporter] as kube
+  [OTel Collector (DaemonSet)\nPII scrubbing processor\ntail sampling: 100% errors, 10% ok] as otel
+}
+package "Country vaults (Lagos, Nairobi)" {
+  [PII vault\n(OTel SDK, no PII in attributes)] as vault
+}
+cloud "Grafana Cloud (usage-based)" {
+  database "Mimir\n(metrics)" as mimir
+  database "Loki\n(logs, 14 d)" as loki
+  database "Tempo\n(traces, 7 d)" as tempo
+  [Grafana: SLO & golden-signal dashboards\nCEO launch dashboard (business KPIs)] as graf
+  [Alerting: multi-window burn rate\nGrafana OnCall: follow-the-sun rota] as alert
+}
+[Sentry\n(crashes, ANRs)] as sentry
+[PSP / SMS / courier webhooks\n(delivery reports, statuses)] as partners
+
+app --> sentry : crash reports
+app --> core : traceparent header
+probes --> otel : probe metrics (remote write)
+cf --> mimir : edge request metrics (Logpush → exporter)
+core --> otel : OTLP
+kube --> otel : Prometheus scrape
+vault --> otel : OTLP over mTLS
+partners --> core : callbacks → partner SLI metrics
+otel --> mimir : metrics
+otel --> loki : logs
+otel --> tempo : traces
+mimir --> graf
+loki --> graf
+tempo --> graf
+mimir --> alert : SLO burn-rate rules
+@enduml

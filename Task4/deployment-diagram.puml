@@ -1,0 +1,79 @@
+@startuml deployment-diagram
+title Africa Delivery — Deployment diagram (MVP, 15 Oct 2026)
+skinparam shadowing false
+skinparam nodesep 25
+skinparam ranksep 40
+
+node "Buyer device\n(Android < $150 / iPhone / feature phone)" as dev {
+  artifact "Flutter app\n+ SQLite cache" as app
+}
+
+cloud "Cloudflare edge\n(PoPs: Lagos, Nairobi, Johannesburg)" as cf {
+  artifact "CDN cache\nWAF rules\nLoad balancing / origin failover" as cfa
+}
+
+node "GCP africa-south1 (Johannesburg) — PRIMARY" as gcp {
+  node "GKE regional cluster" as gke {
+    node "zone a\nn2d-standard-4" as za {
+      artifact "api pod" as api1
+      artifact "worker pod" as w1
+    }
+    node "zone b\nn2d-standard-4" as zb {
+      artifact "api pod " as api2
+      artifact "channels pod" as ch1
+    }
+    node "zone c\nn2d-standard-4" as zc {
+      artifact "api pod  " as api3
+      artifact "ArgoCD, OTel Collector\n(DaemonSet on all nodes)" as ops
+    }
+  }
+  database "Cloud SQL PostgreSQL\nprimary (a) + HA standby (b)\nread replica (c)" as sql
+  database "Memorystore Redis\nStandard HA (a/b)" as redis
+  database "Cloud Storage\n(images, backups)" as gcs
+  node "Pub/Sub · Cloud KMS · Secret Manager" as gsvc
+}
+
+node "AWS af-south-1 (Cape Town) — DR PILOT LIGHT" as aws {
+  node "EKS (1 node, scales on DR)" as eks
+  database "RDS PostgreSQL\n(logical replica)" as rds
+  database "S3 (cross-provider backups)" as s3
+}
+
+node "Local provider, Lagos — NG vault" as lag {
+  node "VM host 1" as l1 {
+    artifact "vault service\nPostgreSQL primary\nkey store (Transit)" as lv1
+  }
+  node "VM host 2 (other rack)" as l2 {
+    artifact "vault service\nPostgreSQL sync standby\nblackbox probe" as lv2
+  }
+}
+node "Local provider, Abuja\n(backup site)" as abj
+node "Local provider, Nairobi — KE vault" as nbo {
+  node "VM host 1 " as n1
+  node "VM host 2 (other rack) " as n2
+}
+node "Nairobi DC2\n(backup site)" as nbo2
+
+cloud "Partners: M-Pesa, Flutterwave, Paystack,\nSendbox, Sendy, SMS/USSD, WhatsApp BSP" as partners
+cloud "SaaS (EU): Grafana Cloud, Sentry\n— no PII" as saas
+
+app --> cfa : HTTPS (3G/4G)
+cfa --> gke : HTTPS origin\n(Cloud Load Balancer)
+cfa ..> eks : origin on DR\n(manual switch)
+gke --> sql : private IP
+gke --> redis
+gke --> gcs
+gke --> gsvc
+sql --> rds : logical replication\n(lag alert > 60 s)
+gcs --> s3 : nightly encrypted backup
+gke --> l1 : mTLS (IPsec VPN)
+gke --> n1 : mTLS (IPsec VPN)
+l1 --> l2 : sync replication
+n1 --> n2 : sync replication
+l1 --> abj : encrypted backups\nevery 15 min (in-country)
+n1 --> nbo2 : encrypted backups\nevery 15 min (in-country)
+gke --> partners : HTTPS (tokens only)
+l1 --> partners : HTTPS with clear PII\n(from Nigeria)
+n1 --> partners : HTTPS with clear PII\n(from Kenya)
+gke ..> saas : OTLP (scrubbed)
+@enduml

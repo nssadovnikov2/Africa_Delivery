@@ -1,0 +1,42 @@
+@startuml c4-context
+!include <C4/C4_Context>
+LAYOUT_TOP_DOWN()
+title Africa Delivery — C4 System Context (MVP, 15 Oct 2026)
+
+Person(buyer, "Buyer (smartphone)", "Urban 22–40, Android < $150, 3G/4G")
+Person(ruralBuyer, "Buyer (feature phone)", "Rural, no mobile internet: USSD/SMS")
+Person(seller, "Seller (SMB)", "Sells via WhatsApp; some offline (USSD)")
+Person(ops, "Operations & Moderation", "KYC, catalogue moderation, takedowns, disputes")
+Person(ceo, "CEO / Investor", "Live launch dashboard on phone")
+
+System(ad, "Africa Delivery Platform", "Marketplace: catalogue, checkout, orders, payouts, notifications, seller onboarding, back office")
+
+System_Ext(mpesa, "M-Pesa (Safaricom Daraja API)", "Mobile money, Kenya: STK push, B2C payouts")
+System_Ext(flw, "Flutterwave", "Cards, bank transfer, payouts — Nigeria, Kenya")
+System_Ext(paystack, "Paystack", "Cards, transfers — Nigeria fallback, South Africa later")
+System_Ext(sendbox, "Sendbox API", "Courier & pickup points, Nigeria")
+System_Ext(sendy, "Sendy API", "Courier delivery, Kenya")
+System_Ext(wa, "WhatsApp Business API (BSP)", "Seller onboarding & order messages")
+System_Ext(ussd, "SMS / USSD gateway (aggregator)", "Short codes, OTP, order status, USSD menus")
+System_Ext(push, "FCM / APNs", "Push notifications")
+System_Ext(stores, "Google Play / App Store", "App distribution, deep links")
+System_Ext(vault, "In-country PII vaults (NG, KE)", "Local providers; hold personal data, tokenise")
+
+Rel(buyer, ad, "Browses, orders, pays, tracks", "Mobile app, HTTPS")
+Rel(ruralBuyer, ussd, "Dials *code#, receives SMS", "USSD/SMS")
+Rel(ussd, ad, "Forwards USSD sessions & inbound SMS", "HTTPS webhook")
+Rel(ad, ussd, "Sends OTP and order SMS via vault", "HTTPS")
+Rel(seller, wa, "Registers, lists products, confirms orders", "WhatsApp")
+Rel(wa, ad, "Delivers seller messages", "HTTPS webhook")
+Rel(ad, wa, "Sends templates & replies", "HTTPS")
+Rel(ops, ad, "Moderates, approves sellers, handles disputes", "Web, HTTPS")
+Rel(ceo, ad, "Views registrations, orders, GMV (1-min refresh)", "Web, HTTPS")
+Rel(ad, mpesa, "Initiates STK push, B2C payouts; receives callbacks", "HTTPS/JSON")
+Rel(ad, flw, "Creates charges, transfers; receives webhooks", "HTTPS/JSON")
+Rel(ad, paystack, "Fails over card payments", "HTTPS/JSON")
+Rel(ad, sendbox, "Books shipment, gets status", "HTTPS/JSON")
+Rel(ad, sendy, "Books delivery, gets status", "HTTPS/JSON")
+Rel(ad, push, "Sends push", "HTTPS")
+Rel(stores, buyer, "Installs app, opens deep links", "")
+Rel(ad, vault, "Tokenise / detokenise personal data", "mTLS")
+@enduml

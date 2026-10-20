@@ -1,0 +1,38 @@
+@startgantt roadmap
+title Africa Delivery — Roadmap (Aug 2026 → Oct 2027)
+printscale weekly zoom 2
+Project starts 2026-08-17
+saturday are closed
+sunday are closed
+
+-- Month 1: foundations (to 15 Sep) --
+[Platform: GKE, Cloud SQL, CI/CD, GitOps, IaC] starts 2026-08-17 and lasts 15 days
+[PII vaults Lagos + Nairobi] starts 2026-08-24 and lasts 15 days
+[PSP & courier KYB / contracts] starts 2026-08-17 and lasts 25 days
+[Catalogue + WhatsApp seller onboarding] starts 2026-08-24 and lasts 20 days
+[Flutter app skeleton + offline cache] starts 2026-08-17 and lasts 20 days
+[Counsel opinion window] starts 2026-09-07 and lasts 10 days
+[M1 checkpoint] happens 2026-09-15
+
+-- Month 2: MVP (to 15 Oct) --
+[Checkout, payments, payouts, ledger] starts 2026-08-31 and lasts 25 days
+[Couriers, USSD, notifications] starts 2026-09-07 and lasts 20 days
+[Back office + CEO dashboard] starts 2026-09-07 and lasts 18 days
+[Store submission (pages live 1 Oct)] starts 2026-09-24 and lasts 5 days
+[Load test, DR drill, hardening] starts 2026-09-28 and lasts 10 days
+[MVP launch NG + KE] happens 2026-10-15
+
+-- Month 3-6 --
+[Hypercare + growth backlog] starts 2026-10-15 and lasts 20 days
+[Track & trace, returns, reviews, flash sales] starts 2026-11-09 and lasts 60 days
+[Seller cabinet + USSD seller onboarding] starts 2026-12-07 and lasts 50 days
+[ZA cell + POPIA consent] starts 2027-01-11 and lasts 55 days
+[M6 checkpoint: ZA live] happens 2027-04-15
+
+-- Month 7-12 --
+[Ghana + Cote d'Ivoire cells, FR] starts 2027-04-19 and lasts 90 days
+[B2B ordering, seller analytics] starts 2027-05-03 and lasts 80 days
+[PUDO video (after DPIA), ML fraud] starts 2027-06-14 and lasts 60 days
+[Extraction by trigger, logistics build/partner review] starts 2027-07-12 and lasts 50 days
+[M12 checkpoint: 5 countries] happens 2027-10-15
+@endgantt

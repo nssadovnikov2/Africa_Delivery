@@ -1,0 +1,75 @@
+@startuml c4-container
+!include <C4/C4_Container>
+LAYOUT_TOP_DOWN()
+title Africa Delivery — C4 Container diagram, grouped by deployment region (MVP)
+
+Person(buyer, "Buyer", "Flutter app / USSD")
+Person(seller, "Seller", "WhatsApp")
+Person(ops, "Ops / CEO", "Back office, dashboards")
+
+Boundary(dev, "End-user devices") {
+  Container(app, "Buyer app", "Flutter (Android, iOS)", "Catalogue offline cache, checkout, order status")
+}
+
+Boundary(edge, "Cloudflare global edge (PoPs Lagos, Nairobi, Johannesburg)") {
+  Container(cdn, "CDN + WAF", "Cloudflare", "Images, public catalogue cache, TLS, bot protection")
+}
+
+Boundary(za, "ZA — GCP africa-south1, Johannesburg (3 zones) — core, tokens only for NG/KE") {
+  Container(api, "api", "Go modular monolith", "Catalogue, checkout, orders, payments, fulfilment, back-office API, deep-link pages")
+  Container(worker, "worker", "Go (same image)", "Outbox relay, notifications, payouts, reconciliation, PSP/courier calls")
+  Container(channels, "channels", "Go (same image)", "USSD sessions, inbound SMS, WhatsApp webhooks; redacts PII to vault")
+  Container(bo, "Back office", "React SPA", "KYC, moderation, takedown, disputes, refunds")
+  ContainerDb(pg, "Core DB", "Cloud SQL PostgreSQL HA", "Schema per module, outbox, ledger; country partition key")
+  ContainerDb(redis, "Cache", "Memorystore Redis HA", "Cache-aside, rate limits, idempotency keys")
+  ContainerDb(gcs, "Object storage", "Cloud Storage", "Product images (WebP renditions)")
+  ContainerQueue(ps, "Job queue", "Pub/Sub", "Async jobs fan-out")
+  Container(dash, "Dashboards", "Grafana (Cloud) + Metabase", "CEO launch dashboard, analytics on read replica")
+}
+
+Boundary(ng, "NG — Local provider, Lagos (backups: Abuja)") {
+  Container(vng, "NG PII vault", "Go service", "Tokenise, mask, consent ledger, in-country egress to SMS/courier")
+  ContainerDb(vngdb, "NG vault DB", "PostgreSQL primary + standby", "Clear PII, KYC docs (encrypted, per-subject keys)")
+}
+
+Boundary(ke, "KE — Local provider, Nairobi (backups: Nairobi DC2)") {
+  Container(vke, "KE PII vault", "Go service", "Tokenise, mask, consent ledger, payment references, in-country egress")
+  ContainerDb(vkedb, "KE vault DB", "PostgreSQL primary + standby", "Clear PII, KYC docs, M-Pesa references")
+}
+
+Boundary(dr, "ZA — AWS af-south-1, Cape Town — DR pilot light") {
+  ContainerDb(rds, "DR replica", "RDS PostgreSQL (logical replica)", "Promoted on region failover")
+  Container(eks, "Standby cluster", "EKS (min 1 node)", "Same manifests via ArgoCD")
+}
+
+System_Ext(psp, "M-Pesa / Flutterwave / Paystack", "Payments")
+System_Ext(log, "Sendbox / Sendy", "Delivery")
+System_Ext(msg, "SMS/USSD aggregator, WhatsApp BSP", "Messaging")
+
+Rel(buyer, app, "Uses")
+Rel(seller, msg, "Chats", "WhatsApp")
+Rel(ops, bo, "Uses", "HTTPS")
+Rel(app, cdn, "API calls, images", "HTTPS")
+Rel(cdn, api, "Origin requests", "HTTPS")
+Rel(bo, api, "Admin API", "HTTPS")
+Rel(api, pg, "Reads/writes", "SQL")
+Rel(api, redis, "Cache-aside", "RESP")
+Rel(api, gcs, "Signed upload URLs", "HTTPS")
+Rel(worker, pg, "Polls outbox", "SQL")
+Rel(worker, ps, "Publishes/consumes jobs")
+Rel(worker, psp, "Charges, payouts, status", "HTTPS")
+Rel(psp, api, "Payment callbacks", "HTTPS")
+Rel(msg, channels, "Webhooks", "HTTPS")
+Rel(api, vng, "Tokenise / masked read", "mTLS")
+Rel(api, vke, "Tokenise / masked read", "mTLS")
+Rel(worker, vng, "Send SMS / book courier for token X", "mTLS")
+Rel(worker, vke, "Send SMS / book courier for token X", "mTLS")
+Rel(vng, vngdb, "SQL")
+Rel(vke, vkedb, "SQL")
+Rel(vng, msg, "SMS with clear phone, from NG", "HTTPS")
+Rel(vng, log, "Courier booking with address, from NG", "HTTPS")
+Rel(vke, msg, "SMS from KE", "HTTPS")
+Rel(vke, log, "Courier booking from KE", "HTTPS")
+Rel(pg, rds, "Logical replication (tokens only)", "TLS")
+Rel(pg, dash, "Read replica / metrics")
+@enduml
