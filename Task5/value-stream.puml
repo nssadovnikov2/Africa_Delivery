@@ -1,0 +1,40 @@
+@startuml value-stream
+title Africa Delivery — Value streams with capabilities (MVP state)\nCapability text: black = Build · grey = Buy · green = Partner · green stage = partner-led · (M6) = after MVP
+skinparam shadowing false
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  RoundCorner 12
+}
+skinparam ArrowColor #5F6B76
+left to right direction
+
+rectangle "<b>BUYER: Order-to-Delivery</b>" as vs1 #FFFFFF {
+  rectangle "<b>1. Discover</b>\n\n2.1 Catalogue\n2.2 Search\n1.1 Buyer app (offline)\n1.2 USSD menus" as d #D6E6F5
+  rectangle "<b>2. Decide</b>\n\n2.3 Deals\n3.2 Verified seller badge\n4.1 Cart\n6.4 Pickup point / landmark" as c #D6E6F5
+  rectangle "<b>3. Order & pay</b>\n\n4.1 Checkout\n5.2 PSP routing\n<color:#1E8E5A>5.1 M-Pesa / Flutterwave / Paystack</color>\n7.1 Phone + OTP" as p #D6E6F5
+  rectangle "<b>4. Fulfil</b>\n\n4.2 Order lifecycle\n<color:#1E8E5A>6.1 Sendbox / Sendy booking</color>\n7.3 PII vault egress\n<color:#5F6B76>1.3 SMS / WhatsApp</color>" as f #D6E6F5
+  rectangle "<b>5. Receive</b>\n\n<color:#1E8E5A>6.2 Courier / pickup point</color>\n<color:#1E8E5A>COD via courier</color>\n6.3 Track & trace (M6)" as r #E3F1E8
+  rectangle "<b>6. After-sales</b>\n\n4.3 Returns & refunds\n4.4 Disputes\n7.2 Fraud rules" as a #D6E6F5
+}
+
+rectangle "<b>SELLER: Onboard-to-Cash</b>" as vs2 #FFFFFF {
+  rectangle "<b>1. Join</b>\n\n3.1 WhatsApp onboarding\n<color:#1E8E5A>WhatsApp BSP</color>\n7.4 Consent" as j #D6E6F5
+  rectangle "<b>2. Get verified</b>\n\n3.2 KYC queue\n2.4 Moderation\n7.3 KYC docs in vault" as v #D6E6F5
+  rectangle "<b>3. List</b>\n\n3.3 Listings & stock\n(WhatsApp / CSV)" as l #D6E6F5
+  rectangle "<b>4. Sell & ship</b>\n\n4.2 Order confirmation\n<color:#1E8E5A>6.1 Courier pickup</color>" as s #D6E6F5
+  rectangle "<b>5. Get paid same day</b>\n\n5.4 Ledger\n<color:#1E8E5A>5.3 M-Pesa B2C / transfers</color>\n3.4 Seller cabinet (M6)" as g #E3F1E8
+}
+
+rectangle "<b>Enablers across both streams</b>\n\n<color:#5F6B76>9.1 GKE / Cloud SQL · 9.2 Grafana Cloud · 8.1 CEO live dashboard · 9.3 Helpdesk</color>\n7.5 Regulatory requests · 1.4 Localisation (5 UI languages)" as en #F2F5F8
+
+d --> c
+c --> p
+p --> f
+f --> r
+r --> a
+j --> v
+v --> l
+l --> s
+s --> g
+s ..> f : same order
+@enduml

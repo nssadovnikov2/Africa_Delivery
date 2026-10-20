@@ -1,0 +1,37 @@
+@startdot stakeholder-influence-interest
+graph G {
+  layout=neato; splines=false; outputorder=nodesfirst;
+  label="Africa Delivery - influence vs interest (2026-08-13)"; labelloc=t; fontsize=18; fontname="Helvetica-Bold";
+  node [fontname="Helvetica"];
+  q2 [shape=box, style="filled", color="#B0B8C0", fillcolor="#FFF4E6", fixedsize=true, width=3.75, height=3.75, label="Keep satisfied", labelloc=t, fontsize=14, fontcolor="#5F6B76", pos="1.875,5.625!"];
+  q1 [shape=box, style="filled", color="#B0B8C0", fillcolor="#FDE2E1", fixedsize=true, width=3.75, height=3.75, label="Manage closely", labelloc=t, fontsize=14, fontcolor="#5F6B76", pos="5.625,5.625!"];
+  q3 [shape=box, style="filled", color="#B0B8C0", fillcolor="#F2F5F8", fixedsize=true, width=3.75, height=3.75, label="Monitor", labelloc=t, fontsize=14, fontcolor="#5F6B76", pos="1.875,1.875!"];
+  q4 [shape=box, style="filled", color="#B0B8C0", fillcolor="#E6F2EA", fixedsize=true, width=3.75, height=3.75, label="Keep informed", labelloc=t, fontsize=14, fontcolor="#5F6B76", pos="5.625,1.875!"];
+  p0 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="6.6000000000000005,7.2749999999999995!"];
+  l0 [shape=plaintext, fontsize=12, label="S1 Investor", pos="6.6000000000000005,7.049999999999999!"];
+  p1 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="5.85,6.6000000000000005!"];
+  l1 [shape=plaintext, fontsize=12, label="S2 CFO", pos="5.85,6.375!"];
+  p2 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="7.199999999999999,5.25!"];
+  l2 [shape=plaintext, fontsize=12, label="S3 CTO", pos="7.199999999999999,5.025!"];
+  p3 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="6.0,4.949999999999999!"];
+  l3 [shape=plaintext, fontsize=12, label="S4 CEO", pos="6.0,4.725!"];
+  p4 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="6.75,3.5250000000000004!"];
+  l4 [shape=plaintext, fontsize=12, label="S5 Marketing", pos="6.75,3.3000000000000003!"];
+  p5 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="2.0999999999999996,4.5!"];
+  l5 [shape=plaintext, fontsize=12, label="S6 Counsel", pos="2.0999999999999996,4.275!"];
+  p6 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="1.125,6.6000000000000005!"];
+  l6 [shape=plaintext, fontsize=12, label="S7 Regulators", pos="1.125,6.375!"];
+  p7 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="2.8499999999999996,4.35!"];
+  l7 [shape=plaintext, fontsize=12, label="S8 Partners", pos="2.8499999999999996,4.125!"];
+  p8 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="6.449999999999999,2.7!"];
+  l8 [shape=plaintext, fontsize=12, label="S9 Sellers", pos="6.449999999999999,2.475!"];
+  p9 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="5.1,3.2249999999999996!"];
+  l9 [shape=plaintext, fontsize=12, label="S10 Buyers", pos="5.1,3.0!"];
+  p10 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="4.199999999999999,2.55!"];
+  l10 [shape=plaintext, fontsize=12, label="S11 Contractors", pos="4.199999999999999,2.325!"];
+  p11 [shape=circle, style=filled, fillcolor="#0B2E4F", color="#0B2E4F", width=0.14, fixedsize=true, label="", pos="0.6000000000000001,0.44999999999999996!"];
+  l11 [shape=plaintext, fontsize=12, label="S12 Ex-PM", pos="0.6000000000000001,0.22499999999999998!"];
+  xa [shape=plaintext, fontsize=13, label="Interest  →", pos="3.75,-0.375!"];
+  ya [shape=plaintext, fontsize=13, label="Influence  ↑", pos="-0.675,3.75!"];
+}
+@enddot
